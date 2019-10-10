@@ -192,11 +192,21 @@ export class UsfmParser extends Parser {
     // Acrostic letter within a poetic line
     enclosed(this, lex, BP, 'qac');
 
+    // \nd ... \nd*
+    // Name of God
+    enclosed(this, lex, BP, 'nd');
+
+    // \wj ... \wj*
+    // Words of Jesus
     enclosed(this, lex, BP, 'wj');
     enclosed(this, lex, BP, 'x');
 
     BP += 10;
     enclosed(this, lex, BP, '+bk', '+bk*', 'bk');
+
+    // \+nd ... \+nd*
+    // Name of God
+    enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
 
     value(this, lex, BP, 'fl');
     value(this, lex, BP, 'fq');

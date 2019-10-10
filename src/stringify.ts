@@ -210,11 +210,19 @@ export class UsfmStringify extends Parser {
     // Acrostic letter within a poetic line
     enclosed(this, lex, BP, 'qac');
 
+    // \nd ... \nd*
+    // Name of God
+    enclosed(this, lex, BP, 'nd');
+
     enclosed(this, lex, BP, 'wj');
     ignoreEnclosed(this, lex, BP, 'x');
 
     BP += 10;
     ignoreEnclosed(this, lex, BP, '+bk', '+bk*', 'bk');
+
+    // \+nd ... \+nd*
+    // Name of God
+    enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
 
     value(this, lex, BP, 'fl');
     value(this, lex, BP, 'fq');
