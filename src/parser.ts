@@ -202,11 +202,6 @@ export class UsfmParser extends Parser {
     enclosed(this, lex, BP, 'x');
 
     BP += 10;
-    enclosed(this, lex, BP, '+bk', '+bk*', 'bk');
-
-    // \+nd ... \+nd*
-    // Name of God
-    enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
 
     value(this, lex, BP, 'fl');
     value(this, lex, BP, 'fq');
@@ -215,5 +210,12 @@ export class UsfmParser extends Parser {
     value(this, lex, BP, 'fqa');
     value(this, lex, BP, 'xo');
     value(this, lex, BP, 'xt');
+
+    BP += 10;
+    enclosed(this, lex, BP, '+bk', '+bk*', 'bk');
+
+    // \+nd ... \+nd*
+    // Name of God
+    enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
   }
 }
