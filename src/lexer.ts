@@ -15,6 +15,7 @@ export class UsfmLexer {
       .token('po', /^\\po\s?\n/i)
       .token('pr', /^\\pr\s/i)
       .token('p', /^\\pi\d\s?\n/i)
+      .token('p', /^\\pm\d\s?\n/i)
       .token('br', /^\\pi\d\s/i);
   }
 
