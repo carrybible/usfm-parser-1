@@ -214,6 +214,7 @@ export class UsfmParser extends Parser {
     enclosed(this, lex, BP, 'it');
     enclosed(this, lex, BP, 'ord');
     enclosed(this, lex, BP, 'sc');
+    enclosed(this, lex, BP, 'bdit');
 
     // \qs ... \qs*
     enclosed(this, lex, BP, 'qs');
@@ -252,6 +253,7 @@ export class UsfmParser extends Parser {
     enclosed(this, lex, BP, '+add', '+add*', 'add');
     enclosed(this, lex, BP, '+fv', '+fv*', 'fv');
     enclosed(this, lex, BP, '+sc', '+sc*', 'sc');
+    enclosed(this, lex, BP, '+bdit', '+bdit*', 'bdit');
     enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
     enclosed(this, lex, BP, '+tl', '+tl*', 'tl');
     enclosed(this, lex, BP, '+wj', '+wj*', 'wj');
