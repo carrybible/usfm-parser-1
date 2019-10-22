@@ -36,7 +36,8 @@ export class UsfmLexer {
   expect(type: string): IToken {
     const token = this.lexer.next();
     const surrogateType = token.type == 'TAG' ? token.match.replace(/^\\/, '').trim() : token.type;
-    if (surrogateType != type) {
+    // Make expect more forgiving if closing tag has an errant '+' value (it's all the NIV's fault)
+    if (surrogateType != type && surrogateType.replace(/^\+/, '') != type) {
       const { start } = token.strpos();
       throw new Error(`Expected ${type}, got ${surrogateType} (at ${start.line}:${start.column})`);
     }
