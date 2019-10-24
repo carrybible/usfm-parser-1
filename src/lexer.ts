@@ -7,8 +7,9 @@ export class UsfmLexer {
   constructor(s?: string) {
     this.lexer = new Lexer(s);
     this.lexer
+      .token('$SKIP_xt', /^\\xt\*/i)
       .token('p', /^\\q\d\s?\n/i)
-      .token('TAG', /\\\+?[^p]{1}\w{0,}\*?\s*/i)
+      .token('TAG', /\\\+?\w{0,}\*?\s*/i)
       .token('TEXT', /[^\\]+/)
       .token('p', /^\\p\s?\n/i)
       .token('br', /^\\p\s/i)
