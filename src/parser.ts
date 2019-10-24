@@ -48,6 +48,32 @@ function enclosed(
     });
 }
 
+function valueOrEnclosed(
+  parser: Parser,
+  lex: UsfmLexer,
+  bp: number,
+  opener: string,
+  closer: string = `${opener}*`,
+  type: string = opener,
+) {
+  parser
+    .builder()
+    .bp(closer, -1)
+    .either(opener, bp, (left, t, bp) => {
+      const value = parser.parse(bp);
+      const next = lex.peek().match
+
+      // If we match the closer, then treat as enclosed marker
+      if (next.replace(/^\\/, '').trim() === closer) {
+        lex.expect(closer)
+        return arrify(left).concat({ type: opener, value: value })
+      }
+
+      // Treat as 'value' marker
+      if (left) return left.concat({ [type]: parser.parse(bp), type })
+    });
+}
+
 export class UsfmParser extends Parser {
   start = 0;
 
@@ -83,6 +109,19 @@ export class UsfmParser extends Parser {
       const content = this.parse(bp);
       return arrify(left).concat({ type: 'p', content });
     });
+
+    builder.either('pm', BP, (left, t, bp) => {
+      var content = this.parse(bp)
+      return arrify(left).concat({ type: 'pm', content })
+    })
+    builder.either('pi1', BP, (left, t, bp) => {
+      var content = this.parse(bp)
+      return arrify(left).concat({ type: 'pi1', content })
+    })
+    builder.either('li1', BP, (left, t, bp) => {
+      var content = this.parse(bp)
+      return arrify(left).concat({ type: 'li1', content })
+    })
 
     // \nb
     // No-break Paragraph
