@@ -123,6 +123,19 @@ export class UsfmParser extends Parser {
       return arrify(left).concat({ type: 'li1', content })
     })
 
+    builder.either('m', BP, (left, t, bp) => {
+      var content = this.parse(bp)
+      return arrify(left).concat({ type: 'm', content })
+    })
+    builder.either('mi', BP, (left, t, bp) => {
+      var content = this.parse(bp)
+      return arrify(left).concat({ type: 'mi', content })
+    })
+    builder.either('q1_p', BP, (left, t, bp) => {
+      var content = this.parse(bp)
+      return arrify(left).concat({ type: 'q1_p', content })
+    })
+
     // \nb
     // No-break Paragraph
     builder.either('nb', BP, (left, t, bp) => {
@@ -163,19 +176,15 @@ export class UsfmParser extends Parser {
     // Blank line
     single(this, BP, 'b');
 
-    single(this, BP, 'li1');
     single(this, BP, 'li2');
     single(this, BP, 'li3');
     single(this, BP, 'li4');
-    single(this, BP, 'm');
-    single(this, BP, 'mi');
 
     // Paragraphs
     single(this, BP, 'pc');
     single(this, BP, 'pmc');
     single(this, BP, 'pmo');
     single(this, BP, 'pmr');
-    single(this, BP, 'pi1');
     single(this, BP, 'pi2');
     single(this, BP, 'pi3');
 
@@ -201,7 +210,7 @@ export class UsfmParser extends Parser {
 
     // \qa
     // Acrostic heading.
-    content(this, lex, BP, 'qa');
+    content(this, lex, 30, 'qa');
 
     // \qd
     // Hebrew note.
@@ -230,24 +239,28 @@ export class UsfmParser extends Parser {
     content(this, lex, BP, 'mt1');
     content(this, lex, BP, 'mt2');
     content(this, lex, BP, 'mt3');
-
     value(this, lex, BP, 'mr');
-    value(this, lex, BP, 's1');
-    value(this, lex, BP, 's2');
+
+    // \s#
+    // Section Heading
+    // Given same binding power as paragraphs so they don't get wrapped in the paragraph
+    value(this, lex, 30, 's1');
+    value(this, lex, 30, 's2');
+
     value(this, lex, BP, 'sp');
     value(this, lex, BP, 'toc1');
     value(this, lex, BP, 'toc2');
     value(this, lex, BP, 'toc3');
 
     // Tables
-    value(this, lex, BP, 'tr');
-    value(this, lex, BP, 'tc1');
+    builder.either('tr', BP, (left, t, bp) => arrify(left).concat({ type: t.type }))
+    builder.either('tc1', BP, (left, t, bp) => arrify(left).concat({ type: t.type }))
     value(this, lex, BP, 'tcr2');
 
     BP += 10;
+    enclosed(this, lex, BP-1, 'f');
     enclosed(this, lex, BP, 'add');
     enclosed(this, lex, BP, 'bk');
-    enclosed(this, lex, BP, 'f');
     enclosed(this, lex, BP, 'k');
     enclosed(this, lex, BP, 'tl');
     enclosed(this, lex, BP, 'it');
@@ -277,11 +290,12 @@ export class UsfmParser extends Parser {
     // Name of God
     enclosed(this, lex, BP, 'nd');
 
+    // Footnotes
+    value(this, lex, BP-1, 'ft');
     value(this, lex, BP, 'fl');
     enclosed(this, lex, BP, 'fm');
     value(this, lex, BP, 'fq');
     value(this, lex, BP, 'fr');
-    value(this, lex, BP, 'ft');
     value(this, lex, BP, 'fqa');
     enclosed(this, lex, BP, 'fv');
     value(this, lex, BP, 'xo');
