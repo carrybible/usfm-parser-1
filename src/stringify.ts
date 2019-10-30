@@ -23,11 +23,25 @@ function value(parser: Parser, lex: UsfmLexer, bp: number, type: string) {
     .led(type, bp, (left, t, bp) => left.concat(parser.parse(bp)));
 }
 
+function ignoreValue(parser: Parser, lex: UsfmLexer, bp: number, type: string) {
+  parser
+    .builder()
+    .nud(type, bp, (t, bp) => {parser.parse(bp); return ''})
+    .led(type, bp, (left, t, bp) => {parser.parse(bp); return left.concat('')});
+}
+
 function content(parser: Parser, lex: UsfmLexer, bp: number, type: string) {
   parser
     .builder()
     .nud(type, bp, (t, bp) => parser.parse(bp))
     .led(type, bp, (left, t, bp) => left.concat(parser.parse(bp)));
+}
+
+function ignoreContent(parser: Parser, lex: UsfmLexer, bp: number, type: string) {
+  parser
+    .builder()
+    .nud(type, bp, (t, bp) => {parser.parse(bp); return ''})
+    .led(type, bp, (left, t, bp) => {parser.parse(bp); return left.concat('')});
 }
 
 function ignoreEnclosed(
@@ -204,47 +218,47 @@ export class UsfmStringify extends Parser {
 
     // \qa
     // Acrostic heading.
-    content(this, lex, 30, 'qa');
+    ignoreContent(this, lex, 30, 'qa');
 
     // \qd
     // Hebrew note.
-    content(this, lex, BP, 'qd');
+    ignoreContent(this, lex, BP, 'qd');
 
-    value(this, lex, BP, 'cl');
-    value(this, lex, BP, 'cp');
-    value(this, lex, BP, 'd');
-    value(this, lex, BP, 'id');
-    value(this, lex, BP, 'ide');
-    value(this, lex, BP, 'ili');
-    value(this, lex, BP, 'ili1');
-    value(this, lex, BP, 'ili2');
-    value(this, lex, BP, 'im');
-    value(this, lex, BP, 'imt1');
-    value(this, lex, BP, 'imt2');
-    value(this, lex, BP, 'ip');
-    value(this, lex, BP, 'ie');
-    value(this, lex, BP, 'iex');
-    value(this, lex, BP, 'is1');
-    value(this, lex, BP, 'ms1');
-    value(this, lex, BP, 'rem');
+    ignoreValue(this, lex, BP, 'cl');
+    ignoreValue(this, lex, BP, 'cp');
+    ignoreValue(this, lex, BP, 'd');
+    ignoreValue(this, lex, BP, 'id');
+    ignoreValue(this, lex, BP, 'ide');
+    ignoreValue(this, lex, BP, 'ili');
+    ignoreValue(this, lex, BP, 'ili1');
+    ignoreValue(this, lex, BP, 'ili2');
+    ignoreValue(this, lex, BP, 'im');
+    ignoreValue(this, lex, BP, 'imt1');
+    ignoreValue(this, lex, BP, 'imt2');
+    ignoreValue(this, lex, BP, 'ip');
+    ignoreValue(this, lex, BP, 'ie');
+    ignoreValue(this, lex, BP, 'iex');
+    ignoreValue(this, lex, BP, 'is1');
+    ignoreValue(this, lex, BP, 'ms1');
+    ignoreValue(this, lex, BP, 'rem');
 
     // \mt#
     // Major title.
-    content(this, lex, BP, 'mt1');
-    content(this, lex, BP, 'mt2');
-    content(this, lex, BP, 'mt3');
+    ignoreContent(this, lex, BP, 'mt1');
+    ignoreContent(this, lex, BP, 'mt2');
+    ignoreContent(this, lex, BP, 'mt3');
     value(this, lex, BP, 'mr');
 
    // \s#
     // Section Heading
     // Given same binding power as paragraphs so they don't get wrapped in the paragraph
-    value(this, lex, 30, 's1');
-    value(this, lex, 30, 's2');
+    ignoreValue(this, lex, 30, 's1');
+    ignoreValue(this, lex, 30, 's2');
 
-    value(this, lex, BP, 'sp');
-    value(this, lex, BP, 'toc1');
-    value(this, lex, BP, 'toc2');
-    value(this, lex, BP, 'toc3');
+    ignoreValue(this, lex, BP, 'sp');
+    ignoreValue(this, lex, BP, 'toc1');
+    ignoreValue(this, lex, BP, 'toc2');
+    ignoreValue(this, lex, BP, 'toc3');
 
     // Tables
     builder.either('tr', BP, (left, t, bp) => arrify(left).concat(''))
@@ -276,7 +290,7 @@ export class UsfmStringify extends Parser {
     // Words of Jesus
     enclosed(this, lex, BP, 'wj');
     enclosed(this, lex, BP, 'w');
-    enclosed(this, lex, BP, 'x');
+    ignoreEnclosed(this, lex, BP, 'x');
 
     BP += 10;
     // \nd ... \nd*
@@ -284,28 +298,28 @@ export class UsfmStringify extends Parser {
     enclosed(this, lex, BP, 'nd');
 
     // Footnotes
-    value(this, lex, BP-1, 'ft');
-    value(this, lex, BP, 'fl');
-    enclosed(this, lex, BP, 'fm');
-    value(this, lex, BP, 'fq');
-    value(this, lex, BP, 'fr');
-    value(this, lex, BP, 'fqa');
-    enclosed(this, lex, BP, 'fv');
-    value(this, lex, BP, 'xo');
-    value(this, lex, BP, 'xt');
+    ignoreValue(this, lex, BP-1, 'ft');
+    ignoreValue(this, lex, BP, 'fl');
+    ignoreEnclosed(this, lex, BP, 'fm');
+    ignoreValue(this, lex, BP, 'fq');
+    ignoreValue(this, lex, BP, 'fr');
+    ignoreValue(this, lex, BP, 'fqa');
+    ignoreEnclosed(this, lex, BP, 'fv');
+    ignoreValue(this, lex, BP, 'xo');
+    ignoreValue(this, lex, BP, 'xt');
 
     BP += 10;
-    enclosed(this, lex, BP, '+bk', '+bk*', 'bk');
-    enclosed(this, lex, BP, '+add', '+add*', 'add');
-    enclosed(this, lex, BP, '+fv', '+fv*', 'fv');
-    enclosed(this, lex, BP, '+sc', '+sc*', 'sc');
-    enclosed(this, lex, BP, '+bdit', '+bdit*', 'bdit');
-    enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
-    enclosed(this, lex, BP, '+tl', '+tl*', 'tl');
-    enclosed(this, lex, BP, '+wj', '+wj*', 'wj');
+    ignoreEnclosed(this, lex, BP, '+bk', '+bk*', 'bk');
+    ignoreEnclosed(this, lex, BP, '+add', '+add*', 'add');
+    ignoreEnclosed(this, lex, BP, '+fv', '+fv*', 'fv');
+    ignoreEnclosed(this, lex, BP, '+sc', '+sc*', 'sc');
+    ignoreEnclosed(this, lex, BP, '+bdit', '+bdit*', 'bdit');
+    ignoreEnclosed(this, lex, BP, '+nd', '+nd*', 'nd');
+    ignoreEnclosed(this, lex, BP, '+tl', '+tl*', 'tl');
+    ignoreEnclosed(this, lex, BP, '+wj', '+wj*', 'wj');
 
     // \+nd ... \+nd*
     // Name of God
-    enclosed(this, lex, BP, '+nd', '+nd*', 'nd');
+    ignoreEnclosed(this, lex, BP, '+nd', '+nd*', 'nd');
   }
 }
