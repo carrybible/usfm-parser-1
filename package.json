@@ -1,12 +1,12 @@
 {
   "name": "@carrybible/usfm-parser",
-  "version": "0.0.22",
+  "version": "0.0.24",
   "description": "",
   "main": "index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "parse": "tsc test && node test",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\""
   },

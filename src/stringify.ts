@@ -102,6 +102,16 @@ export class UsfmStringify extends Parser {
       return arrify(left).concat(content);
     });
 
+    builder.either('q1_p', BP, (left, t, bp) => {
+      const content = this.parse(bp);
+      return arrify(left).concat(content);
+    });
+
+    builder.either('pm', BP, (left, t, bp) => {
+      const content = this.parse(bp);
+      return arrify(left).concat(content);
+    });
+
     // \nb
     // No-break Paragraph
     builder.either('nb', BP, (left, t, bp) => {
@@ -121,7 +131,7 @@ export class UsfmStringify extends Parser {
       const id = this.start;
       this.start++;
 
-      return arrify(left).concat(this.parse(bp));
+      return arrify(left).concat(' ' + this.parse(bp));
     });
 
     BP += 10;
