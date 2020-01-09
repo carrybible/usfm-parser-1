@@ -1,6 +1,6 @@
 {
   "name": "@carrybible/usfm-parser",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "",
   "main": "index.d.ts",
   "scripts": {
