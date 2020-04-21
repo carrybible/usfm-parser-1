@@ -3,7 +3,7 @@ import { UsfmLexer } from './lexer';
 
 function arrify(val) {
   if (val === null || val === undefined) {
-    return '';
+    return ' ';
   }
 
   return val;
@@ -12,8 +12,8 @@ function arrify(val) {
 function single(parser: Parser, bp: number, type: string) {
   parser
     .builder()
-    .nud(type, bp, (t, bp) => '')
-    .led(type, bp, (left, t, bp) => left.concat(''));
+    .nud(type, bp, (t, bp) => ' ')
+    .led(type, bp, (left, t, bp) => left.concat(' '));
 }
 
 function value(parser: Parser, lex: UsfmLexer, bp: number, type: string) {
@@ -32,7 +32,7 @@ function ignoreValue(parser: Parser, lex: UsfmLexer, bp: number, type: string) {
     })
     .led(type, bp, (left, t, bp) => {
       parser.parse(bp);
-      return left.concat('');
+      return left.concat(' ');
     });
 }
 
@@ -48,11 +48,11 @@ function ignoreContent(parser: Parser, lex: UsfmLexer, bp: number, type: string)
     .builder()
     .nud(type, bp, (t, bp) => {
       parser.parse(bp);
-      return '';
+      return ' ';
     })
     .led(type, bp, (left, t, bp) => {
       parser.parse(bp);
-      return left.concat('');
+      return left.concat(' ');
     });
 }
 
@@ -70,7 +70,7 @@ function ignoreEnclosed(
     .either(opener, bp, (left, t, bp) => {
       const value = parser.parse(bp);
       lex.expect(closer);
-      return arrify(left).concat('');
+      return arrify(left).concat(' ');
     });
 }
 
@@ -88,7 +88,7 @@ function enclosed(
     .either(opener, bp, (left, t, bp) => {
       const value = parser.parse(bp);
       lex.expect(closer);
-      return arrify(left).concat(value);
+      return arrify(left).concat(value).concat(' ');
     });
 }
 
@@ -100,7 +100,7 @@ export class UsfmStringify extends Parser {
     const builder = this.builder();
     builder.bp('$EOF', -1);
     builder.nud('TEXT', Number.MAX_VALUE, (t, bp) => t.match.replace(/(^(\r?\n)+|(\r?\n)+$)/g, ''));
-    builder.led('TEXT', Number.MAX_VALUE, (left, t, bp) => left.concat(t.match.replace(/(^(\r?\n)+|(\r?\n)+$)/g, '')));
+    builder.led('TEXT', Number.MAX_VALUE, (left, t, bp) => left.concat(t.match.replace(/(^(\r?\n)+|(\r?\n)+$)/g, ' ')));
 
     // binding power
     // this controls operator precedence;
@@ -278,7 +278,7 @@ export class UsfmStringify extends Parser {
     value(this, lex, BP, 'tcr2');
 
     BP += 10;
-    enclosed(this, lex, BP - 1, 'f');
+    ignoreEnclosed(this, lex, BP - 1, 'f');
     enclosed(this, lex, BP, 'add');
     enclosed(this, lex, BP, 'bk');
     enclosed(this, lex, BP, 'k');
@@ -304,11 +304,13 @@ export class UsfmStringify extends Parser {
     enclosed(this, lex, BP, 'w');
     ignoreEnclosed(this, lex, BP, 'x');
 
-    BP += 10;
     // \nd ... \nd*
     // Name of God
     enclosed(this, lex, BP, 'nd');
+    // \+nd ... \+nd*
+    enclosed(this, lex, BP, '+nd');
 
+    BP += 10;
     // Footnotes
     ignoreValue(this, lex, BP - 1, 'ft');
     ignoreValue(this, lex, BP, 'fl');
@@ -326,12 +328,15 @@ export class UsfmStringify extends Parser {
     ignoreEnclosed(this, lex, BP, '+fv', '+fv*', 'fv');
     ignoreEnclosed(this, lex, BP, '+sc', '+sc*', 'sc');
     ignoreEnclosed(this, lex, BP, '+bdit', '+bdit*', 'bdit');
-    ignoreEnclosed(this, lex, BP, '+nd', '+nd*', 'nd');
     ignoreEnclosed(this, lex, BP, '+tl', '+tl*', 'tl');
     ignoreEnclosed(this, lex, BP, '+wj', '+wj*', 'wj');
+  }
 
-    // \+nd ... \+nd*
-    // Name of God
-    ignoreEnclosed(this, lex, BP, '+nd', '+nd*', 'nd');
+  format() {
+    return this.parse()
+                .trim()
+                .replace(/([\.\,\?\!])(\S)/g, '$1 $2') // add space after punctual
+                .replace(/\s+(\W)/g, "$1") // remove spaces before punctual
+                .replace(/\s+/g, ' ');
   }
 }
