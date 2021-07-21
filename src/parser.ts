@@ -94,11 +94,12 @@ export class UsfmParser extends Parser {
     // \c
     // Chapter
     builder.led('c', BP, (left, t, bp) => {
-      const num = parseInt(lex.expect('TEXT').match.trim());
+      const text= lex.expect('TEXT').match.trim();
+      const num = parseInt(text);
       const id = this.start;
       this.start++;
       const content = this.parse(bp);
-      return left.concat({ type: 'c', num, id, content });
+      return left.concat({ type: 'c', num, id, content, text });
     });
 
     BP += 10;
